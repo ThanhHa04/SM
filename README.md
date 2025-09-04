@@ -42,4 +42,4 @@
     - Tài khoản: `teacher`
     - Mật khẩu: `password`
  
-- Chạy php artisan migrate:fresh --seed để tạo data ảo
+- Chạy `php artisan migrate:fresh --seed` để tạo data ảo
