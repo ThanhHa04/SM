@@ -20,7 +20,7 @@
                     @forelse($rows as $row)
                     <tr>
                         <td class="text-xs">{{$row->student_id}}</td>
-                        <td class="text-xs">{{$row->user->name}}</td>
+                        <td class="text-xs">{{$row->name}}</td>
                         <td class="text-xs">{{$row->user->email}}</td>
                         <td class="text-xs">{{date('d/m/Y', strtotime($row->dob))}}</td>
                         <td class="text-xs">{{$row->gender}}</td>
@@ -29,9 +29,9 @@
                             <a class="text-secondary font-weight-bold text-xs"
                                 href="{{ route('students.show-classroom', ['id' => $row->id]) }}">Xem</a> |
                             <a class="text-secondary font-weight-bold text-xs"
-                                href="{{route('students.edit', ['id' => $row->user->id])}}">Sửa</a> | 
+                                href="{{route('students.edit', ['id' => $row->id])}}">Sửa</a> | 
                             <a class="text-secondary font-weight-bold text-xs"
-                                href="{{route('students.delete', ['id' => $row->user->id])}}">Xóa</a>
+                                href="{{route('students.delete', ['id' => $row->id])}}">Xóa</a>
                         </td>
                     </tr>
                     @empty

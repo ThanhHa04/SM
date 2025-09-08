@@ -1,6 +1,6 @@
 @extends('layout.base')
 
-@section('page_title', 'Sinh viên: ' .$student->user->name)
+@section('page_title', 'Sinh viên: ' .$student->name)
 
 @section('slot')
 <div class="card">

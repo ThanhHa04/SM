@@ -13,12 +13,20 @@ class StudentProfile extends Model
         'dob',
         'student_id',
         'phone_number',
-        'gender'
+        'gender',
+        'name',
+        'user_id'
     ];
 
-    public function user() {
-        return $this->hasOne(User::class, 'profile_id')->where('role', 'student');  //users.profile_id = student_profiles.id
+    // public function user() {
+    //     return $this->hasOne(User::class, 'profile_id')->where('role', 'student');  //users.profile_id = student_profiles.id
+    // }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id')->where('role', 'student');;
     }
+
     public function subjects() {
     
         return $this->belongsToMany(Subject::class, 'student_subject');

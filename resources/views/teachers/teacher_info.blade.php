@@ -1,5 +1,5 @@
 @extends('layout.base')
-@section('page_title','Giảng viên: ' .$teacherProfile->user->name ) 
+@section('page_title','Giảng viên: ' .$teacherProfile->name ) 
 @section('slot')
 <div class="card">
     <div class="card-body px-0 pb-2">

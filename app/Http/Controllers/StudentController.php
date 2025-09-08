@@ -21,10 +21,8 @@ class StudentController extends Controller
     private function generateStudentId(): string
     {
         $year = date('y');
-        $studentID = 'S' . $year . '0';
-        $latest = MainModel::where('role', 'student')->orderByDesc('profile_id')->value('profile_id');
-        $nextIndex = $latest + 1;
-        return $studentID . $nextIndex;
+        $latest = StudentProfile::max('id') ?? 0;
+        return 'S' . $year . '0' . ($latest + 1);
     }
 
 
@@ -42,22 +40,21 @@ class StudentController extends Controller
             $params['student_id'] = $this->generateStudentId();
             $params['role'] = 'student';
             DB::transaction(function () use ($params) {
-                $profile = StudentProfile::create([
+                $user = MainModel::create([
+                    'username'   => $params['student_id'],
+                    'email'      => $params['email'],
+                    'password'   => $params['password'],
+                    'role'       => $params['role'],
+                ]);
+                StudentProfile::create([
+                    'user_id'      => $user->id,
                     'name'         => $params['name'],
                     'dob'          => $params['dob'],
                     'email'        => $params['email'],
                     'phone_number' => $params['phone_number'],
                     'student_id'   => $params['student_id'],
-                ]);
-                $params['profile_id'] = $profile->id;
-                MainModel::create([
-                    'name'       => $params['name'],
-                    'username'   => $params['student_id'],
-                    'email'      => $params['email'],
-                    'password'   => $params['password'],
-                    'role'       => $params['role'],
-                    'profile_id' => $profile->id,
-                ]);
+                    'gender'       => $params['gender']
+                ]);                
             });
             return redirect()->route('students')->withSuccess("Đã thêm");
         } catch (\Exception $e) {
@@ -75,18 +72,31 @@ class StudentController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $rec = MainModel::findOrFail($id);
+            $student = StudentProfile::with('user')->findOrFail($id);
+
+            if (!$student) {
+                return redirect()->back()->with('error', 'User này chưa có hồ sơ sinh viên');
+            }
             $params = $request->all();
+            
             if(strlen($params['password']))
                 $params['password'] = Hash::make($params['password']);
             else
                 unset($params['password']);
             $params['username'] = $params['student_id'];
             $params['role'] = 'student';
-            DB::transaction(function () use ($params, $rec) {
-                $rec->profile->update($params);
-                $rec->update($params);
-            });
+
+            $student->user->update([
+                'username'    => $params['student_id'],
+                'email'       => $params['email']
+            ]);
+            $student->update([
+                'name'         => $params['name'],
+                'dob'          => $params['dob'],
+                'phone_number' => $params['phone_number'],
+                'gender'       => $params['gender']
+            ]);  
+            
             return redirect()->route('students')->withSuccess("Đã cập nhật");
         } catch (\Exception $e) {
             return redirect()->back()->withError($e->getMessage())->withInput();
@@ -95,8 +105,7 @@ class StudentController extends Controller
 
     public function delete($id) {
         try {
-            $rec = MainModel::findOrFail($id);
-            $rec->profile->delete();
+            $rec = StudentProfile::with('user')->findOrFail($id);
             $rec->delete();
             return redirect()->back()->withSuccess("Đã xóa");
         } catch (\Exception $e) {
@@ -106,8 +115,9 @@ class StudentController extends Controller
 
     public function showClassroom($id)
     {
-        $student = StudentProfile::with('user', 'classrooms')->findOrFail($id);
-        $classes = $student->classrooms;
+        $student = StudentProfile::where('user_id', $id)->firstOrFail();
+        $studentt = StudentProfile::with('user', 'classrooms')->findOrFail($student->id);
+        $classes = $studentt->classrooms;
             
         // SELECT classrooms.*
         // FROM classrooms

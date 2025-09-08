@@ -22,10 +22,8 @@ class TeacherController extends Controller
     private function generateTeacherId(): string
     {
         $year = date('y');
-        $teacherID = 'T' . $year . '0';
-        $count = MainModel::where('role', 'teacher')->orderByDesc('profile_id')->value('profile_id');
-        $nextIndex = $count + 1;
-        return $teacherID . $nextIndex;
+        $latest = TeacherProfile::max('id') ?? 0;
+        return 'T' . $year . '0' . ($latest + 1);
     }
 
     public function add()
@@ -40,23 +38,23 @@ class TeacherController extends Controller
             $params['password'] = Hash::make($params['password']);
             $params['role'] = 'teacher';
             DB::transaction(function () use ($params) {
-                $profile = TeacherProfile::create([
+                $user = MainModel::create([
+                    'username'   => $params['teacher_id'],
+                    'email'      => $params['email'],
+                    'password'   => $params['password'],
+                    'role'       => $params['role'],
+                ]);
+                TeacherProfile::create([
                     'name'         => $params['name'],
                     'phone_number' => $params['phone_number'] ?? null,
                     'email'        => $params['email'],
                     'password'     => $params['password'],
                     'teacher_id'   => $params['teacher_id'],
                     'dob'          => $params['dob'],
+                    'gender'       => $params['gender'],
+                    'user_id'      => $user->id,
                 ]);
-                $params['profile_id'] = $profile->id;
-                MainModel::create([
-                    'name'       => $params['name'],
-                    'username'   => $params['teacher_id'],
-                    'email'      => $params['email'],
-                    'password'   => $params['password'],
-                    'role'       => $params['role'],
-                    'profile_id' => $profile->id,
-                ]);
+                
             });
             return redirect()->route('teachers')->withSuccess("Đã thêm");
         } catch (\Exception $e) {
@@ -73,20 +71,26 @@ class TeacherController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $rec = MainModel::findOrFail($id);
+            $teacher = TeacherProfile::with('user')->findOrFail($id);
+            if (!$teacher) {
+                return redirect()->back()->with('error', 'User này chưa có hồ sơ sinh viên');
+            }
             $params = $request->all();
             if (strlen($params['password']))
                 $params['password'] = Hash::make($params['password']);
             else
                 unset($params['password']);
             $params['role'] = 'teacher';
-            DB::transaction(function () use ($params, $rec) {
-                $rec->profile->update($params);
-                $rec->update($params);
-                $rec->profile->update([
-                    'phone_number' => $params['phone_number'] ?? null,
-                ]);
-            });
+            $teacher->user->update([
+                'username'   => $params['teacher_id'],
+                'email'      => $params['email'],
+            ]);
+            $teacher->update([
+                'name'         => $params['name'],
+                'phone_number' => $params['phone_number'],  
+                'dob'          => $params['dob'],
+                'gender'       => $params['gender']
+            ]);
             return redirect()->route('teachers')->withSuccess("Đã cập nhật");
         } catch (\Exception $e) {
             return redirect()->back()->withError($e->getMessage())->withInput();

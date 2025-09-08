@@ -47,7 +47,7 @@
         <hr class="horizontal light mt-0 mb-2">
         <div class="w-auto overflow-auto" style="max-height: 60%!important">
             <ul class="navbar-nav">
-                @if(in_array(auth()->user()->role, ['teacher']))
+                @if(in_array(auth()->user()->role, ['admin']))
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Sinh viên</h6>
                 </li>
@@ -94,7 +94,7 @@
                         </span>
                     </a>
                 </li>
-                @if(in_array(auth()->user()->role, ['teacher']))
+                @if(in_array(auth()->user()->role, ['admin']))
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{route('subjects.add')}}">
                         <span class="nav-link-text ms-1">
@@ -132,7 +132,7 @@
                 @endif
                 @if(in_array(auth()->user()->role, ['student']))
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{route('scores.student', ['id' => auth()->user()->profile->id])}}">
+                    <a class="nav-link text-white" href="{{route('scores.student', ['id' => auth()->user()->id])}}">
                         <span class="nav-link-text ms-1">
                             Bảng điểm cá nhân
                         </span>
@@ -152,14 +152,14 @@
                 </li>
                 @if(in_array(auth()->user()->role, ['student']))
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{route('students.show-classroom', ['id' => auth()->user()->profile->id])}}">
+                    <a class="nav-link text-white" href="{{route('students.show-classroom', ['id' => auth()->user()->id])}}">
                         <span class="nav-link-text ms-1">
                             Danh sách lớp
                         </span>
                     </a>
                 </li>
                 @endif
-                @if(in_array(auth()->user()->role, ['teacher']))
+                @if(in_array(auth()->user()->role, ['teacher','admin']))
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{route('classes')}}">
                         <span class="nav-link-text ms-1">
@@ -167,6 +167,8 @@
                         </span>
                     </a>
                 </li>
+                @endif
+                @if(in_array(auth()->user()->role, ['admin']))
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{route('classes.add')}}">
                         <span class="nav-link-text ms-1">

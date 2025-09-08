@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\StudentProfile;
 use App\Models\TeacherProfile;
-use App\Models\Classroom;
 
 class UserFactory extends Factory
 {
@@ -30,13 +29,11 @@ class UserFactory extends Factory
         $role = $roles[array_rand($roles)];
 
         return [
-            'name' => $this->generateVietnameseName(),
             'username' => null, // sẽ gán sau
             'email' => $this->faker->unique()->safeEmail(),
             'password' => bcrypt('password'),
             'remember_token' => Str::random(10),
             'role' => $role,
-            'profile_id' => null, // sẽ gán sau
         ];
     }
 
@@ -45,31 +42,38 @@ class UserFactory extends Factory
         return $this->afterCreating(function (User $user) {
             static $studentIndex = 1;
             static $teacherIndex = 1;
+
             if ($user->role === 'student') {
                 $student_id = 'S250' . $studentIndex++;
-                $profile = StudentProfile::create([
+                StudentProfile::create([
+                    'name' => $this->generateVietnameseName(),
+                    'user_id' => $user->id, 
                     'student_id' => $student_id,
                     'dob' => $this->faker->dateTimeBetween('2003-01-01', '2006-12-31')->format('Y-m-d'),
-                    //'class_id' => Classroom::inRandomOrder()->first()?->id ?? 1,
                     'gender' => $this->faker->randomElement(['Nam', 'Nữ']),
                     'phone_number' => $this->faker->regexify('09[0-9]{8}'),
                 ]);
                 $user->update([
                     'username' => $student_id,
-                    'profile_id' => $profile->id,
                 ]);
+
             } elseif ($user->role === 'teacher') {
                 $teacher_id = 'T250' . $teacherIndex++;
-                $profile = TeacherProfile::create([
+                TeacherProfile::create([
+                    'name' => $this->generateVietnameseName(),
+                    'user_id' => $user->id,
                     'teacher_id' => $teacher_id,
                     'dob' => $this->faker->dateTimeBetween('1990-01-01', '2005-12-31')->format('Y-m-d'),
-                    //'phone_number' => $this->faker->phoneNumber(),
                     'phone_number' => $this->faker->regexify('09[0-9]{8}'),
                     'gender' => $this->faker->randomElement(['Nam', 'Nữ']),
                 ]);
                 $user->update([
                     'username' => $teacher_id,
-                    'profile_id' => $profile->id,
+                ]);
+
+            } elseif ($user->role === 'admin') {
+                $user->update([
+                    'username' => 'admin',
                 ]);
             }
         });

@@ -30,7 +30,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="teacher_profile_id" id="teacher_{{ $teacher->id }}"
                         value="{{$teacher->id}}" {{ isset($rec) && $rec->teacher_profile_id == $teacher->id ? 'checked' : '' }}>
-                    <label class="form-control-label" for="teacher_{{ $teacher->id }}">{{ $teacher->user->name }}</label>
+                    <label class="form-control-label" for="teacher_{{ $teacher->id }}">{{ $teacher->name }}</label>
                 </div>
                 @endforeach
             </div>
@@ -53,7 +53,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="student_profile_id[]"
                         value="{{$student->id}}" {{ $check ? 'checked' : '' }}>
-                    <label class="custom-control-label" for="customRadio1">{{$student->user->name}}</label>
+                    <label class="custom-control-label" for="customRadio1">{{$student->name}}</label>
                 </div>
                 @endforeach
             </div>

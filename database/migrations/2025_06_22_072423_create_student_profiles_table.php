@@ -16,7 +16,9 @@ class CreateStudentProfilesTable extends Migration
         Schema::create('student_profiles', function (Blueprint $table) {
             $table->id();
             $table->dateTime('dob');
+            $table->string('user_id')->unique();
             $table->string('student_id')->unique();
+            $table->string('name');
             $table->string('phone_number');
             $table->enum('gender',['Nam', 'Nữ']);
             $table->timestamps();

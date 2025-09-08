@@ -13,11 +13,17 @@ class TeacherProfile extends Model
     'dob',
     'phone_number',
     'teacher_id',
-    'gender'
+    'gender',
+    'name',
+    'user_id'
     ];
 
-    public function user() {
-        return $this->hasOne(User::class, 'profile_id', 'id')->where('role', 'teacher');
+    // public function user() {
+    //     return $this->hasOne(User::class, 'profile_id', 'id')->where('role', 'teacher');
+    // }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id')->where('role', 'teacher');
     }
 
     public function teacherSubject(){

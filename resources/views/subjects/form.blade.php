@@ -42,8 +42,8 @@
         @endphp
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="teacher_profile_id[]"
-                value="{{$row->profile->id}}" {{ $check ? 'checked' : '' }}>
-            <label class="custom-control-label" for="customRadio1">{{$row->name}}</label>
+                value="{{$row->teacherProfile->id}}" {{ $check ? 'checked' : '' }}>
+            <label class="custom-control-label" for="customRadio1">{{$row->teacherProfile->name}}</label>
         </div>
         @endforeach
     </div>

@@ -36,8 +36,9 @@ class ScoreController extends Controller
 
     public function byStudent($id)
     {
-        $data['rows'] = MainModel::where('student_profile_id', $id)->get();
-        $data['rec'] = StudentProfile::findOrFail($id);
+        $student = StudentProfile::where('user_id', $id)->firstOrFail();
+        $data['rows'] = MainModel::where('student_profile_id', $student->id)->get();
+        $data['rec'] = $student;
         return view('scores.student.index', $data);
     }
 

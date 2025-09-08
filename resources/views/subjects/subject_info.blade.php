@@ -17,7 +17,7 @@
                     @forelse($teacher_subject_list as $teacher)
                     <tr>
                         <td class="text-xs">{{ $teacher->teacherProfile?->teacher_id }}</td>
-                        <td class="text-xs">{{ $teacher->teacherProfile?->user?->name }}</td>
+                        <td class="text-xs">{{ $teacher->teacherProfile?->name }}</td>
                         <td class="text-xs">{{ $teacher->created_at }}</td>
                     </tr>
                     @empty

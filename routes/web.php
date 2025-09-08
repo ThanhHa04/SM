@@ -13,7 +13,9 @@ Route::middleware('auth')->namespace('App\Http\Controllers')->group(function () 
     Route::get('/', function () {
         if(auth()->user()->role == 'teacher')
             return redirect()->route('students');
-        else return redirect()->route('scores.student', ['id' => auth()->user()->profile->id]);
+        elseif(auth()->user()->role == 'student') 
+            return redirect()->route('scores.student', ['id' => auth()->user()->id]);
+        else return redirect()->route('students');
     })->name('index');
 
     Route::get('/students', [StudentController::class,'index'])->name('students');

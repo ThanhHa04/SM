@@ -31,11 +31,25 @@ class User extends Authenticatable
         return $this->belongsToMany(Subject::class, 'student_subjects', 'student_id', 'subject_id');
     }
 
-    public function profile() {
-        if($this->role == 'student')
-            return $this->belongsTo(StudentProfile::class, 'profile_id');
-        else if($this->role == 'teacher')
-            return $this->belongsTo(TeacherProfile::class, 'profile_id');
-        return null;
+    // public function profile() {
+    //     if($this->role == 'student')
+    //         return $this->belongsTo(StudentProfile::class, 'profile_id');
+    //     else if($this->role == 'teacher')
+    //         return $this->belongsTo(TeacherProfile::class, 'profile_id');
+    //     else if($this->role == 'admin')
+    //         return null;
+    // }
+
+    public function studentProfile(){
+        return $this->hasOne(StudentProfile::class);
     }
+
+    public function teacherProfile(){
+        return $this->hasOne(TeacherProfile::class);
+    }
+
+    public function isAdmin(){
+        return $this->role === 'admin';
+    }
+
 }

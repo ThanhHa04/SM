@@ -17,7 +17,7 @@
                 <tbody>
                     <tr>
                         <td class="text-xs">{{ $classroom->teacher?->teacher_id ?? '' }}</td>
-                        <td class="text-xs">{{ $classroom->teacher?->user?->name ?? 'Chưa có dữ liệu' }}</td>
+                        <td class="text-xs">{{ $classroom->teacher?->name ?? 'Chưa có dữ liệu' }}</td>
                         @if(in_array(auth()->user()->role, ['teacher']))
                             @if($classroom->teacher_profile_id)
                             <td class="align-middle">
@@ -49,7 +49,7 @@
                     @forelse($classroom_students as $row)
                     <tr>
                         <td class="text-xs">{{$row->student->student_id}}</td>
-                        <td class="text-xs">{{$row->student->user->name}}</td>
+                        <td class="text-xs">{{$row->student->name}}</td>
                         <td class="text-xs">{{date('d/m/Y', strtotime($row->student->dob))}}</td>
                         <td class="align-middle">
                             @if(in_array(auth()->user()->role, ['teacher']))

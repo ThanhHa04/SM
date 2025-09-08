@@ -19,8 +19,12 @@ class DatabaseSeeder extends Seeder
     {
         Subject::factory()->count(10)->create();
         Classroom::factory()->count(5)->create();
+        
+        User::factory()->count(1)->create([
+            'role' => 'admin'
+        ]);
 
-        User::factory()->count(20)->create([
+        User::factory()->count(19)->create([
             'role' => 'student'
         ]);
 
