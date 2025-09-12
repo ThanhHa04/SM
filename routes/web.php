@@ -28,11 +28,14 @@ Route::middleware('auth')->namespace('App\Http\Controllers')->group(function () 
     Route::get('/student/subjects', [StudentSubjectController::class, 'index'])->name('student.subjects');
     Route::post('/student/subjects', [StudentSubjectController::class, 'store'])->name('student.subjects.store');
     Route::get('/students/{id}/classes', [StudentController::class, 'showClassroom'])->name('students.show-classroom');
+    Route::get('/students/search', [StudentController::class, 'search'])->name('students.search');
+
 
 
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers');
     Route::get('/teachers/create', [TeacherController::class, 'add'])->name('teachers.add');
     Route::post('/teachers/create', [TeacherController::class, 'create'])->name('teachers.create'); 
+    Route::get('/teachers/search', [TeacherController::class, 'search'])->name('teachers.search');
     Route::get('/teachers/update/{id}', [TeacherController::class, 'edit'])->name('teachers.edit');
     Route::post('/teachers/update/{id}', [TeacherController::class, 'update'])->name('teachers.update');
     Route::get('/teachers/delete/{id}', [TeacherController::class, 'delete'])->name('teachers.delete');
@@ -41,6 +44,7 @@ Route::middleware('auth')->namespace('App\Http\Controllers')->group(function () 
     Route::get('/classes', [ClassroomController::class,'index'])->name('classes');
     Route::get('/classes/create', [ClassroomController::class,'add'])->name('classes.add');
     Route::post('/classes/create', [ClassroomController::class,'create'])->name('classes.create');
+    Route::get('/classes/search', [ClassroomController::class, 'search'])->name('classes.search');
     Route::get('/classes/update/{id}', [ClassroomController::class,'edit'])->name('classes.edit');
     Route::post('/classes/update/{id}', [ClassroomController::class,'update'])->name('classes.update');
     Route::get('/classes/delete/{id}', [ClassroomController::class,'delete'])->name('classes.delete');
@@ -53,6 +57,7 @@ Route::middleware('auth')->namespace('App\Http\Controllers')->group(function () 
     Route::post('/subjects/update/{id}', [SubjectController::class,'update'])->name('subjects.update');
     Route::get('/subjects/delete/{id}', [SubjectController::class,'delete'])->name('subjects.delete');
     Route::get('/subjects/{id}/show', [SubjectController::class,'showSubject'])->name('subjects.show-subject');
+    Route::get('/subjects/search', [SubjectController::class, 'search'])->name('subjects.search');
 
     Route::get('/scores/create', [ScoreController::class,'add'])->name('scores.add');
     Route::post('/scores/create', [ScoreController::class,'create'])->name('scores.create');

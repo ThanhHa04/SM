@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Subject::factory()->count(10)->create();
-        Classroom::factory()->count(5)->create();
         
         User::factory()->count(1)->create([
             'role' => 'admin'
@@ -31,7 +30,8 @@ class DatabaseSeeder extends Seeder
         User::factory()->count(5)->create([
             'role' => 'teacher'
         ]);
-
+            
+        Classroom::factory()->count(5)->create();
         Score::factory()->count(50)->create();
         StudentSubject::factory()->count(30)->create();
         TeacherSubject::factory()->count(15)->create();

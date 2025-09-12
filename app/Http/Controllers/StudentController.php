@@ -15,8 +15,32 @@ class StudentController extends Controller
     public function index()
     {
         $data['rows'] = StudentProfile::with('user')->get();
+        $data['totalStudents'] = StudentProfile::count(); 
+        $data['enableSearch'] = true;
+        $data['searchRoute'] = route('students.search');
         return view('students.index')->with($data);
     }
+    
+    public function search(Request $request)
+    {
+        $query = StudentProfile::with('user');
+
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->whereHas('user', function ($q) use ($keyword) {
+                $q->where('name', 'like', "%$keyword%")
+                ->orWhere('email', 'like', "%$keyword%");
+            })->orWhere('student_id', 'like', "%$keyword%");
+        }
+
+        $data['rows'] = $query->get();
+        $data['totalStudents'] = $query->count();
+        $data['enableSearch'] = true;
+        $data['searchRoute'] = route('students.search');
+        
+        return view('students.index')->with($data);
+    }
+
 
     private function generateStudentId(): string
     {
@@ -127,4 +151,6 @@ class StudentController extends Controller
 
         return view('students.student_class', compact('student', 'classes'));
     }
+
+    
 }

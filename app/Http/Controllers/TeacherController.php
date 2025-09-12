@@ -15,9 +15,32 @@ class TeacherController extends Controller
 {
     public function index()
     {
-        $data['rows'] = MainModel::where('role', 'teacher')->get();
+        $data['rows'] = TeacherProfile::with('user')->get();
+        $data['totalTeacher'] = TeacherProfile::count();
+        $data['enableSearch'] = true;
+        $data['searchRoute'] = route('teachers.search');
         return view('teachers.index', $data);
     }
+
+public function search(Request $request)
+    {
+        $query = TeacherProfile::with('user');
+
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->whereHas('user', function ($q) use ($keyword) {
+                $q->where('name', 'like', "%$keyword%")
+                ->orWhere('email', 'like', "%$keyword%");
+            })->orWhere('teacher_id', 'like', "%$keyword%");
+        }
+
+        $data['rows'] = $query->get();
+        $data['totalTeacher'] = $query->count();
+        $data['enableSearch'] = true;
+
+        return view('teachers.index')->with($data);
+    }
+
 
     private function generateTeacherId(): string
     {
@@ -36,6 +59,7 @@ class TeacherController extends Controller
         try {
             $params = $request->all();
             $params['password'] = Hash::make($params['password']);
+            $data['teacher_id'] = $this->generateTeacherId();
             $params['role'] = 'teacher';
             DB::transaction(function () use ($params) {
                 $user = MainModel::create([
@@ -64,33 +88,39 @@ class TeacherController extends Controller
 
     public function edit($id)
     {
-        $data['rec'] = MainModel::findOrFail($id);
+        $data['classes'] = Classroom::all();
+        $data['rec'] = TeacherProfile::with('user')->findOrFail($id);
         return view('teachers.form')->with($data);
     }
 
     public function update(Request $request, $id)
     {
         try {
-            $teacher = TeacherProfile::with('user')->findOrFail($id);
-            if (!$teacher) {
-                return redirect()->back()->with('error', 'User này chưa có hồ sơ sinh viên');
+            $student = StudentProfile::with('user')->findOrFail($id);
+
+            if (!$student) {
+                return redirect()->back()->with('error', 'User này chưa có hồ sơ giảng viên');
             }
             $params = $request->all();
-            if (strlen($params['password']))
+            
+            if(strlen($params['password']))
                 $params['password'] = Hash::make($params['password']);
             else
                 unset($params['password']);
+            $params['username'] = $params['teacher_id'];
             $params['role'] = 'teacher';
-            $teacher->user->update([
-                'username'   => $params['teacher_id'],
-                'email'      => $params['email'],
+
+            $student->user->update([
+                'username'    => $params['teacher_id'],
+                'email'       => $params['email']
             ]);
-            $teacher->update([
+            $student->update([
                 'name'         => $params['name'],
-                'phone_number' => $params['phone_number'],  
                 'dob'          => $params['dob'],
+                'phone_number' => $params['phone_number'],
                 'gender'       => $params['gender']
-            ]);
+            ]);  
+            
             return redirect()->route('teachers')->withSuccess("Đã cập nhật");
         } catch (\Exception $e) {
             return redirect()->back()->withError($e->getMessage())->withInput();

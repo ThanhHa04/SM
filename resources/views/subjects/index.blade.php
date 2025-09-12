@@ -1,5 +1,5 @@
 @extends('layout.base')
-@section('page_title', 'Môn học')
+@section('page_title', 'Môn học ' . (isset($totalSubject) ? "($totalSubject)" : ''))
 @section('slot')
 <div class="card">
     <div class="card-body px-0 pb-2">

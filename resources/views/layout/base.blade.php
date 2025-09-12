@@ -47,6 +47,18 @@
         <hr class="horizontal light mt-0 mb-2">
         <div class="w-auto overflow-auto" style="max-height: 60%!important">
             <ul class="navbar-nav">
+                @if(in_array(auth()->user()->role, ['teacher','student']))
+                <li class="nav-item mt-3">
+                    <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Sinh viên</h6>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{route('students')}}">
+                        <span class="nav-link-text ms-1">
+                            Thông tin cá nhân
+                        </span>
+                    </a>
+                </li>
+                @endif
                 @if(in_array(auth()->user()->role, ['admin']))
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Sinh viên</h6>
@@ -55,7 +67,7 @@
                     <a class="nav-link text-white" href="{{route('students')}}">
                         <span class="nav-link-text ms-1">
                             Danh sách sinh viên
-                        </span>
+                        </span> 
                     </a>
                 </li>
                 <li class="nav-item">
@@ -82,8 +94,8 @@
                         </span>
                     </a>
                 </li>
-            
                 @endif
+
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Môn học</h6>
                 </li>
@@ -184,8 +196,26 @@
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
             <div class="container-fluid py-1 px-3 mt-3">
-                <nav aria-label="breadcrumb">
+                <nav aria-label="breadcrumb" class="d-flex justify-content-between align-items-center w-100">
                     <h6 class="font-weight-bolder mb-0">@yield('page_title')</h6>
+                    @if (!empty($enableSearch) && $enableSearch)
+                    <form class="d-flex ms-auto w-100" action="{{ $searchRoute ?? '#' }}" method="GET" style="max-width: 350px;">
+                        <div class="input-group">
+                            <input class="form-control form-control-sm rounded-start" 
+                                type="search" 
+                                name="keyword" 
+                                placeholder="Tìm kiếm..."
+                                aria-label="Search"
+                                value="{{ request('keyword') }}"
+                                style="fs-5 padding: 0.25rem 0.5rem; color: #000;">
+                            <button class="btn bg-secondary px-3" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-search" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.106a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                    @endif
                 </nav>
             </div>
         </nav>

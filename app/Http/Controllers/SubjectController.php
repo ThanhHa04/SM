@@ -16,9 +16,29 @@ class SubjectController extends Controller
     public function index()
     {
         $data['rows'] = MainModel::all();
+        $data['totalSubject'] = MainModel::count();
+        $data['enableSearch'] = true;
+        $data['searchRoute'] = route('subjects.search');
         return view('subjects.index', $data);
     }
 
+    public function search(Request $request)
+    {
+        $query = MainModel::query();
+
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->where('name', 'like', "%$keyword%")
+                  ->orWhere('code', 'like', "%$keyword%");
+        }
+
+        $data['rows'] = $query->get();
+        $data['totalSubject'] = $query->count();
+        $data['enableSearch'] = true;
+
+        return view('subjects.index')->with($data);
+    }
+    
     public function add()
     {
         $data['teachers'] = User::where('role', 'teacher')->get();

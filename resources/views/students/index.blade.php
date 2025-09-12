@@ -1,5 +1,5 @@
 @extends('layout.base')
-@section('page_title', 'Danh sách sinh viên')
+@section('page_title', 'Danh sách sinh viên ' . (isset($totalStudents) ? "($totalStudents)" : ''))
 @section('slot')
 <div class="card">
     <div class="card-body px-0 pb-2">

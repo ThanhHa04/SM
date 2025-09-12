@@ -18,9 +18,28 @@ class ClassroomController extends Controller
     public function index()
     {
         $data['rows'] = MainModel::all();
+        $data['totalClass'] = MainModel::count();
+        $data['enableSearch'] = true;
+        $data['searchRoute'] = route('classes.search');
         return view('classes.index', $data);
     }
 
+    public function search(Request $request)
+    {
+        $query = MainModel::query();
+
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+            $query->where('name', 'like', "%$keyword%");
+        }
+
+        $data['rows'] = $query->get();
+        $data['totalClass'] = $query->count();
+        $data['enableSearch'] = true;
+
+        return view('classes.index')->with($data);
+    }
+    
     public function add()
     {
         $subjects = Subject::all();
@@ -52,7 +71,7 @@ class ClassroomController extends Controller
             ]);
                 if(isset($params['student_profile_id']))
                     foreach($params['student_profile_id'] as $row)
-                        ClassroomStudent::create(['class_id' => $rec->id, 'student_profile_id' => $row]);
+                        ClassroomStudent::create(['classroom_id' => $rec->id, 'student_profile_id' => $row]);
             });
             return redirect()->route('classes')->withSuccess("Đã thêm");
         } catch (\Exception $e) {
