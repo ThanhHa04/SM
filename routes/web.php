@@ -57,7 +57,7 @@ Route::middleware('auth')->namespace('App\Http\Controllers')->group(function () 
     Route::post('/subjects/update/{id}', [SubjectController::class,'update'])->name('subjects.update');
     Route::get('/subjects/delete/{id}', [SubjectController::class,'delete'])->name('subjects.delete');
     Route::get('/subjects/{id}/show', [SubjectController::class,'showSubject'])->name('subjects.show-subject');
-    Route::get('/subjects/{id}/teachers', [SubjectController::class, 'getTeachersBySubject']);
+    Route::get('/subjects/{subject}/teachers', [SubjectController::class, 'teachers']);
     Route::get('/subjects/search', [SubjectController::class, 'search'])->name('subjects.search');
 
     Route::get('/scores/create', [ScoreController::class,'add'])->name('scores.add');

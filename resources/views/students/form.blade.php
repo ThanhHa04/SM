@@ -6,7 +6,8 @@
     {{ csrf_field() }}
     <label class="form-label mt-3">Mã số sinh viên *</label>
     <div class="input-group input-group-outline opacity-7">
-        <input type="text" name="student_id" class="form-control" required value="{{ old('student_id', $rec->student_id ?? ($student_id ?? '')) }}" readonly>
+        <input type="text" name="student_id" class="form-control" required 
+        value="{{ old('student_id', $rec->student_id ?? ($student_id ?? '')) }}" readonly>
     </div>
 
     <label class="form-label mt-3">Họ và tên *</label>

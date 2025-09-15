@@ -61,6 +61,19 @@ class StudentController extends Controller
     public function create(Request $request){
         try {
             $params = $request->all();
+
+            if (MainModel::where('email', $params['email'])->exists()) {
+                return redirect()->back()
+                    ->withError("Email này đã được sử dụng")
+                    ->withInput();
+            }
+
+            if (StudentProfile::where('phone_number', $params['phone_number'])->exists()) {
+                return redirect()->back()
+                    ->withError("Số điện thoại này đã được sử dụng")
+                    ->withInput();
+            }
+            
             $params['password'] = Hash::make($params['password']);
             $params['student_id'] = $this->generateStudentId();
             $params['role'] = 'student';

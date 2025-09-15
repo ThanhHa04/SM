@@ -22,10 +22,12 @@
                         <td class="text-xs">{{ $row->credits }}</td>
                         <td class="text-xs">{{$row->semester}}</td>
                         <td class="align-middle">
-                            @if(in_array(auth()->user()->role, ['teacher','admin']))
+                            @if(in_array(auth()->user()->role, ['admin','teacher']))
                             <a class="text-secondary font-weight-bold text-xs"
-                                href="{{route('subjects.show-subject', ['id' => $row->id])}}">Xem</a> | 
-                            <a class="text-secondary font-weight-bold text-xs"
+                                href="{{route('subjects.show-subject', ['id' => $row->id])}}">Xem</a>
+                            @endif
+                            @if(in_array(auth()->user()->role, ['admin']))
+                             | <a class="text-secondary font-weight-bold text-xs"
                                 href="{{route('subjects.edit', ['id' => $row->id])}}">Sửa</a> | 
                             <a class="text-secondary font-weight-bold text-xs"
                                 href="{{route('subjects.delete', ['id' => $row->id])}}">Xóa</a>

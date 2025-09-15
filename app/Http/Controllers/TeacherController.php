@@ -58,6 +58,13 @@ public function search(Request $request)
     public function create(Request $request){
         try {
             $params = $request->all();
+
+            if (MainModel::where('email', $params['email'])->exists()) {
+                return redirect()->back()
+                    ->withError("Email này đã được sử dụng")
+                    ->withInput();
+            }
+            
             $params['password'] = Hash::make($params['password']);
             $data['teacher_id'] = $this->generateTeacherId();
             $params['role'] = 'teacher';

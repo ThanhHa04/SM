@@ -15,11 +15,22 @@ class SubjectController extends Controller
 {
     public function index()
     {
-        $data['rows'] = MainModel::all();
-        $data['totalSubject'] = MainModel::count();
-        $data['enableSearch'] = true;
-        $data['searchRoute'] = route('subjects.search');
-        return view('subjects.index', $data);
+        $user = auth()->user();
+
+        if (!empty($user->teacher_id)) {
+            $subjectIds = TeacherSubject::where('teacher_profile_id', $user->teacher_id)
+                ->pluck('subject_id');
+            $rows = MainModel::whereIn('id', $subjectIds)->get();
+        } else {
+            $rows = MainModel::all();
+        }
+
+        return view('subjects.index', [
+            'rows' => $rows,
+            'totalSubject' => $rows->count(),
+            'enableSearch' => true,
+            'searchRoute' => route('subjects.search'),
+        ]);
     }
 
     public function search(Request $request)
@@ -47,6 +58,14 @@ class SubjectController extends Controller
 
     public function create(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|unique:subjects,name',
+            'code' => 'required|string|unique:subjects,code',
+        ], [
+            'name.unique' => 'Tên môn học này đã tồn tại',
+            'code.unique' => 'Mã môn học này đã tồn tại.',
+        ]);
+        
         try {
             $params = $request->all();
             DB::transaction(function () use ($params) {
@@ -69,7 +88,7 @@ class SubjectController extends Controller
     public function edit($id)
     {
         $data['rec'] = MainModel::findOrFail($id);
-        $data['teachers'] = User::where('role', 'teacher')->get();
+        $data['teachers'] = TeacherProfile::get();
         $data['teacher_subject_list'] = TeacherSubject::where('subject_id', $id)->get();
         return view('subjects.form')->with($data);
     }
@@ -124,16 +143,14 @@ class SubjectController extends Controller
         return view('subjects.subject_info', compact('subject', 'teacher_subject_list', 'classroom_list'));
     }
 
-    public function getTeachersBySubject($id)
+    public function teachers($subjectId)
     {
-        // Lấy tất cả teacher_profile_id trong bảng teacher_subjects
-        $teacherIds = TeacherSubject::where('subject_id', $id)->pluck('teacher_profile_id');
+        $teacherIds = TeacherSubject::where('subject_id', $subjectId)
+            ->pluck('teacher_profile_id');
 
-        // Lấy thông tin giáo viên
         $teachers = TeacherProfile::whereIn('id', $teacherIds)->get();
-
-        // Trả về JSON
         return response()->json($teachers);
     }
+
 
 }

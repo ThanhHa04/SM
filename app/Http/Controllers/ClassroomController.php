@@ -17,10 +17,31 @@ class ClassroomController extends Controller
 {
     public function index()
     {
-        $data['rows'] = MainModel::all();
-        $data['totalClass'] = MainModel::count();
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            $data['rows'] = MainModel::all();
+            $data['totalClass'] = MainModel::count();
+        } elseif ($user->role === 'teacher') {
+            // Chỉ lấy các lớp mà giáo viên đảm nhiệm
+            $teacherId = $user->teacherProfile->id;
+            $data['rows'] = MainModel::where('teacher_profile_id', $teacherId)->get();
+            $data['totalClass'] = $data['rows']->count();
+        } elseif ($user->role === 'student') {
+            // Chỉ lấy các lớp mà sinh viên đang học
+            $studentId = $user->studentProfile->id;
+            $data['rows'] = MainModel::whereHas('students', function($q) use ($studentId) {
+                $q->where('student_profile_id', $studentId);
+            })->get();
+            $data['totalClass'] = $data['rows']->count();
+        } else {
+            $data['rows'] = collect();
+            $data['totalClass'] = 0;
+        }
+
         $data['enableSearch'] = true;
         $data['searchRoute'] = route('classes.search');
+
         return view('classes.index', $data);
     }
 
@@ -61,13 +82,18 @@ class ClassroomController extends Controller
 
     public function create(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|unique:classes,name',
+        ], [
+            'name.unique' => 'Tên lớp này đã tồn tại',
+        ]);
         try {
             $params = $request->all();
             DB::transaction(function () use ($params) {
                 $rec = MainModel::create([
                 'subject_id' => $params['subject_id'],
                 'name' => $params['name'],
-                'teacher_profile_id' => $params['teacher_profile_id'],
+                'teacher_profile_id' => $params['teacher_profile_id'] ?? null,
             ]);
                 if(isset($params['student_profile_id']))
                     foreach($params['student_profile_id'] as $row)

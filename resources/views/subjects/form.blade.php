@@ -7,12 +7,12 @@
     
     <label class="form-label mt-3">Tên môn *</label>
     <div class="input-group input-group-outline">
-        <input type="text" name="name" class="form-control" required value="{{$rec->name ?? old('name') ?? ''}}">
+        <input type="text" name="name" class="form-control" required value="{{$rec->name ?? old('name') ?? ''}}" {{ isset($rec) ? 'readonly style=opacity:0.7;' : '' }}>
     </div>
 
     <label class="form-label mt-3">Mã môn *</label>
     <div class="input-group input-group-outline">
-        <input type="text" name="code" class="form-control" required value="{{$rec->code ?? old('code') ?? ''}}">
+        <input type="text" name="code" class="form-control" required value="{{$rec->code ?? old('code') ?? ''}}" {{ isset($rec) ? 'readonly style=opacity:0.7;' : '' }}>
     </div>
 
     <label class="form-label mt-3">Số tín chỉ *</label>
@@ -33,7 +33,7 @@
                 $check = false;
                 if(isset($teacher_subject_list)) {
                     foreach($teacher_subject_list as $index => $ts) {
-                        if($ts->teacher_profile_id == $teacher->teacherProfile->id) {
+                        if($ts->teacher_profile_id == $teacher->id) {
                             $check = true;
                             unset($teacher_subject_list[$index]);
                             break;
@@ -43,8 +43,8 @@
             @endphp
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="teacher_profile_id[]"
-                    value="{{ $teacher->teacherProfile->id }}" {{ $check ? 'checked' : '' }}>
-                <label class="custom-control-label" for="teacher_{{ $teacher->teacherProfile->id }}">{{ $teacher->teacherProfile->name }}</label>
+                    value="{{ $teacher->id }}" {{ $check ? 'checked' : '' }}>
+                <label class="custom-control-label" for="teacher_{{ $teacher->id }}">{{ $teacher->name }}</label>
             </div>
         @endforeach
     </div>

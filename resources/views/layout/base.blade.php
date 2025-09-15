@@ -106,6 +106,13 @@
                         </span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{route('subjects')}}">
+                        <span class="nav-link-text ms-1">
+                            Môn học đảm nhiệm
+                        </span>
+                    </a>
+                </li>
                 @if(in_array(auth()->user()->role, ['admin']))
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{route('subjects.add')}}">
@@ -127,6 +134,8 @@
                         </span>
                     </a>
                 </li>
+                @endif
+                @if(in_array(auth()->user()->role, ['admin']))
                  <li class="nav-item">
                     <a class="nav-link text-white" href="{{route('scores.semesters')}}">
                         <span class="nav-link-text ms-1">

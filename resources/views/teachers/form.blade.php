@@ -1,5 +1,5 @@
 @extends('layout.base')
-@section('page_title', isset($rec) ? 'Cập nhật giáo viên: '.$rec->name : 'Thêm giáo viên')
+@section('page_title', isset($rec) ? 'Cập nhật giáo viên: '.$rec->name : 'Thêm giảng viên')
 @section('slot')
 <form id="form" class="text-start" method="POST"
     action="{{isset($rec) ? route('teachers.update', ['id' => $rec->id]) : route('teachers.create')}}">
@@ -7,12 +7,12 @@
     <label class="form-label mt-3">Mã Giảng Viên *</label>
     <div class="input-group input-group-outline opacity-7">
         <input type="text" name="teacher_id" class="form-control opacity-10" required
-            value="{{ old('teacher_id', $rec->teacher_id ?? '') }}" readonly>    
+            value="{{ old('teacher_id', $rec->teacher_id ?? ($teacher_id ?? '')) }}" readonly>    
     </div>
     
     <label class="form-label mt-3">Họ và tên *</label>
     <div class="input-group input-group-outline">
-        <input type="text" name="name" class="form-control" required value="{{$rec->name ?? old('name') ?? ''}}">
+        <input type="text" name="name" class="form-control" placeholder="Nhập tên" required value="{{$rec->name ?? old('name') ?? ''}}">
     </div>
 
    <label class="form-label mt-3">Số điện thoại *</label>
@@ -24,7 +24,7 @@
    
     <label class="form-label mt-3">Email *</label>
     <div class="input-group input-group-outline">
-        <input type="email" name="email" class="form-control" required value="{{$rec->user->email ?? old('email') ?? ''}}">
+        <input type="email" name="email" class="form-control" placeholder="Nhập email" required value="{{$rec->user->email ?? old('email') ?? ''}}">
     </div>
 
     <label class="form-label mt-3">Ngày sinh *</label>

@@ -83,30 +83,37 @@ class ScoreController extends Controller
 
     public function viewClassrooms()
     {
-        $data['rows'] = Classroom::all();
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
+            $data['rows'] = Classroom::all();
+        } elseif ($user->role === 'teacher') {
+            $teacherId = $user->teacherProfile->id;
+            $data['rows'] = Classroom::where('teacher_profile_id', $teacherId)->get();
+        } else {
+            $data['rows'] = collect();
+        }
+
         return view('scores.classroom.list', $data);
     }
 
-    public function byClassroom($classId)
-{
-    // Lấy danh sách sinh viên thuộc lớp này
-    $rec  = Classroom::findOrFail($classId);
-    $students = StudentProfile::whereHas('classrooms', function($q) use ($classId) {
-            $q->where('classroom_id', $classId);
-        })
-        ->with(['scores' => function($q) use ($classId) {
-            $q->where('class_id', $classId);
-        }])
-        ->orderByRaw("SUBSTRING_INDEX(name, ' ', -1)") // sắp xếp theo tên cuối
-        ->get();
+    public function byClassroom($classId){
+        $rec  = Classroom::findOrFail($classId);
+        $students = StudentProfile::whereHas('classrooms', function($q) use ($classId) {
+                $q->where('classroom_id', $classId);
+            })
+            ->with(['scores' => function($q) use ($classId) {
+                $q->where('class_id', $classId);
+            }])
+            ->orderByRaw("SUBSTRING_INDEX(name, ' ', -1)") 
+            ->get();
 
-    return view('scores.classroom.index', [
-        'rec'      => $rec,
-        'students' => $students,
-        'classId'  => $classId
-    ]);
-}
-
+        return view('scores.classroom.index', [
+            'rec'      => $rec,
+            'students' => $students,
+            'classId'  => $classId
+        ]);
+    }
 
     public function add()
     {
