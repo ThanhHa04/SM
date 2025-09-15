@@ -87,68 +87,91 @@ class ScoreController extends Controller
         return view('scores.classroom.list', $data);
     }
 
-    public function byClassroom(Request $request, $id)
-    {
-        $data['rec'] = Classroom::findOrFail($id);
-        $data['rows'] = MainModel::all();
-        $data['rows_filtered'] = [];
-        foreach ($data['rows'] as $row) {
-            if ($row->classroom->id == $id) {
-                array_push($data['rows_filtered'], $row);
-            }
-        }
-        $data['rows'] = $data['rows_filtered'];
-        return view('scores.classroom.index', $data);
-    }
+    public function byClassroom($classId)
+{
+    // Lấy danh sách sinh viên thuộc lớp này
+    $rec  = Classroom::findOrFail($classId);
+    $students = StudentProfile::whereHas('classrooms', function($q) use ($classId) {
+            $q->where('classroom_id', $classId);
+        })
+        ->with(['scores' => function($q) use ($classId) {
+            $q->where('class_id', $classId);
+        }])
+        ->orderByRaw("SUBSTRING_INDEX(name, ' ', -1)") // sắp xếp theo tên cuối
+        ->get();
+
+    return view('scores.classroom.index', [
+        'rec'      => $rec,
+        'students' => $students,
+        'classId'  => $classId
+    ]);
+}
+
 
     public function add()
     {
-        $data['classes'] = Classroom::all();
-        $data['students'] = StudentProfile::with('user')->get();
+        $data['rows'] = StudentProfile::with('user')->get();
         return view('scores.form')->with($data);
     }
 
-    public function create(Request $request)
+    // public function create(Request $request)
+    // {
+    //     try {
+    //         $params = $request->all();
+    //         DB::transaction(function () use ($params) {
+    //             MainModel::create([
+    //                 'student_profile_id' => $params['student_profile_id'],
+    //                 'class_id' => $params['class_id'],
+    //                 'tp1' => $params['tp1'],
+    //                 'tp2' => $params['tp2'],
+    //                 'qt' => $params['qt'],
+    //                 'ck' => $params['ck'],
+    //                 'tk' => ($params['tp1']+$params['tp2'])*10/100 + $params['qt']*40/100 + $params['ck']*0.5,
+    //             ]);
+    //         });
+    //         return redirect()->route('scores.students')->withSuccess("Đã thêm");
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->withError($e->getMessage())->withInput();
+    //     }
+    // }
+
+    public function edit($classId)
     {
-        try {
-            $params = $request->all();
-            DB::transaction(function () use ($params) {
-                MainModel::create([
-                    'student_profile_id' => $params['student_profile_id'],
-                    'class_id' => $params['class_id'],
-                    'tp1' => $params['tp1'],
-                    'tp2' => $params['tp2'],
-                    'qt' => $params['qt'],
-                    'ck' => $params['ck'],
-                    'tk' => ($params['tp1']+$params['tp2'])*10/100 + $params['qt']*40/100 + $params['ck']*0.5,
-                ]);
-            });
-            return redirect()->route('scores.students')->withSuccess("Đã thêm");
-        } catch (\Exception $e) {
-            return redirect()->back()->withError($e->getMessage())->withInput();
-        }
+        $class = Classroom::with(['students.scores' => function($q) use ($classId) {
+            $q->where('class_id', $classId);
+        }])->findOrFail($classId);
+
+        return view('scores.form', compact('class', 'classId'));
     }
 
-    public function edit($id)
-    {
-        $data['classes'] = Classroom::all();
-        $data['students'] = User::where('role', 'student')->get();
-        $data['rec'] = MainModel::findOrFail($id);
-        return view('scores.form')->with($data);
-    }
+    public function update(Request $request, $classId){
+        foreach ($request->scores as $studentId => $scoreData) {
+            $tp1 = $scoreData['tp1'] ?? null;
+            $tp2 = $scoreData['tp2'] ?? null;
+            $qt  = $scoreData['qt'] ?? null;
+            $ck  = $scoreData['ck'] ?? null;
 
-    public function update(Request $request, $id)
-    {
-        try {
-            $rec = MainModel::findOrFail($id);
-            $params = $request->all();
-            DB::transaction(function () use ($params, $rec) {
-                $rec->update($params);
-            });
-            return redirect()->route('scores.students')->withSuccess("Đã cập nhật");
-        } catch (\Exception $e) {
-            return redirect()->back()->withError($e->getMessage())->withInput();
+            $tk = null;
+            if (!is_null($tp1) && !is_null($tp2) && !is_null($qt) && !is_null($ck)) {
+                $tk = ($tp1 + $tp2) * 0.1 + $qt * 0.4 + $ck * 0.5;
+            }
+            MainModel::updateOrCreate(
+                [
+                    'student_profile_id' => $studentId,
+                    'class_id' => $classId,
+                ],
+                [
+                    'tp1' => $tp1,
+                    'tp2' => $tp2,
+                    'qt'  => $qt,
+                    'ck'  => $ck,
+                    'tk'  => $tk,
+                ]
+            );
         }
+
+        return redirect()->route('scores.students', $classId)
+                        ->with('success', 'Cập nhật điểm thành công!');
     }
 
     public function delete($id)

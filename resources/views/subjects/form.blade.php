@@ -28,23 +28,24 @@
 
     <label class="form-label mt-3">Giảng viên *</label>
     <div class="overflow-auto" style="max-height: 50vh;">
-        @foreach($teachers as $row)
-        @php
-        $check = false;
-        if(isset($teacher_subject_list))
-            foreach($teacher_subject_list as $index => $roww) {
-                if($roww->teacherProfile?->teacher_id == $row->profile?->teacher_id) {
-                    $check = true;
-                    unset($teacher_subject_list[$index]);
-                    break;
+        @foreach($teachers as $teacher)
+            @php
+                $check = false;
+                if(isset($teacher_subject_list)) {
+                    foreach($teacher_subject_list as $index => $ts) {
+                        if($ts->teacher_profile_id == $teacher->teacherProfile->id) {
+                            $check = true;
+                            unset($teacher_subject_list[$index]);
+                            break;
+                        }
+                    }
                 }
-            }
-        @endphp
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="teacher_profile_id[]"
-                value="{{$row->teacherProfile->id}}" {{ $check ? 'checked' : '' }}>
-            <label class="custom-control-label" for="customRadio1">{{$row->teacherProfile->name}}</label>
-        </div>
+            @endphp
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="teacher_profile_id[]"
+                    value="{{ $teacher->teacherProfile->id }}" {{ $check ? 'checked' : '' }}>
+                <label class="custom-control-label" for="teacher_{{ $teacher->teacherProfile->id }}">{{ $teacher->teacherProfile->name }}</label>
+            </div>
         @endforeach
     </div>
 

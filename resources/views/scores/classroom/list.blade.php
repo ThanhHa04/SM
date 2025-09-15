@@ -17,7 +17,9 @@
                         <td class="text-xs">{{$row->name}}</td>
                         <td class="align-middle">
                             <a class="text-secondary font-weight-bold text-xs"
-                                href="{{route('scores.classroom', ['id' => $row->id])}}">Xem điểm</a>
+                                href="{{route('scores.classroom', $row->id)}}">Xem điểm |</a>
+                            <a class="text-secondary font-weight-bold text-xs"
+                                href="{{route('scores.edit', $row->id)}}">Nhập điểm</a>
                         </td>
                     </tr>
                     @empty

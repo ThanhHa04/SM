@@ -57,12 +57,15 @@ Route::middleware('auth')->namespace('App\Http\Controllers')->group(function () 
     Route::post('/subjects/update/{id}', [SubjectController::class,'update'])->name('subjects.update');
     Route::get('/subjects/delete/{id}', [SubjectController::class,'delete'])->name('subjects.delete');
     Route::get('/subjects/{id}/show', [SubjectController::class,'showSubject'])->name('subjects.show-subject');
+    Route::get('/subjects/{id}/teachers', [SubjectController::class, 'getTeachersBySubject']);
     Route::get('/subjects/search', [SubjectController::class, 'search'])->name('subjects.search');
 
     Route::get('/scores/create', [ScoreController::class,'add'])->name('scores.add');
     Route::post('/scores/create', [ScoreController::class,'create'])->name('scores.create');
-    Route::get('/scores/update/{id}', [ScoreController::class,'edit'])->name('scores.edit');
-    Route::post('/scores/update/{id}', [ScoreController::class,'update'])->name('scores.update');
+    Route::get('/scores/classroom/{classId}', [ScoreController::class,'byClassroom'])->name('scores.classroom');
+    Route::get('/scores/classrooms', [ScoreController::class,'viewClassrooms'])->name('scores.classrooms');
+    Route::get('/scores/classroom/{classId}/edit', [ScoreController::class, 'edit'])->name('scores.edit');
+    Route::post('/scores/classroom/{classId}/update', [ScoreController::class, 'update'])->name('scores.update');
     Route::get('/scores/delete/{id}', [ScoreController::class,'delete'])->name('scores.delete');
     Route::get('/scores/subjects', [ScoreController::class,'viewSubjects'])->name('scores.subjects');
     Route::get('/scores/subject/{id}', [ScoreController::class,'bySubject'])->name('scores.subject');
@@ -71,8 +74,6 @@ Route::middleware('auth')->namespace('App\Http\Controllers')->group(function () 
     Route::get('/scores/student/{student_id}/class/{class_id}', [ScoreController::class,'thisSubjectStudent'])->name('scores.thisSubjectStudent');
     Route::get('/scores/semesters', [ScoreController::class,'viewSemesters'])->name('scores.semesters');
     Route::get('/scores/semester/{id}', [ScoreController::class,'bySemester'])->name('scores.semester');
-    Route::get('/scores/classrooms', [ScoreController::class,'viewClassrooms'])->name('scores.classrooms');
-    Route::get('/scores/classroom/{id}', [ScoreController::class,'byClassroom'])->name('scores.classroom');
 
     Route::get('/logout', [LoginController::class,'logout'])->name('logout');
 });

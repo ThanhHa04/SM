@@ -22,7 +22,7 @@
                     @forelse($rows as $row)
                     <tr>
                         <td class="text-xs">{{$row->student->student_id}}</td>
-                        <td class="text-xs">{{$row->student->user->name}}</td>
+                        <td class="text-xs">{{$row->student->name}}</td>
                         <td class="text-xs">{{$row->classroom->name}}</td>
                         <td class="text-xs">{{$row->tp1}}</td>
                         <td class="text-xs">{{$row->tp2}}</td>
@@ -34,9 +34,9 @@
                             <a class="text-secondary font-weight-bold text-xs"
                                 href="{{route('scores.request_edit.add', ['id' => $row->id])}}">Yêu cầu sửa điểm</a>
                             @endif
-                            @if(in_array(auth()->user()->role, ['teacher']))
+                            @if(in_array(auth()->user()->role, ['teacher','admin']))
                             <a class="text-secondary font-weight-bold text-xs"
-                                href="{{route('scores.edit', ['id' => $row->id])}}">Sửa</a> | 
+                                href="{{route('scores.edit', $row->classroom->id)}}">Sửa</a> | 
                             <a class="text-secondary font-weight-bold text-xs"
                                 href="{{route('scores.delete', ['id' => $row->id])}}">Xóa</a>
                             @endif

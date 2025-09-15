@@ -18,17 +18,11 @@ class StudentProfile extends Model
         'user_id'
     ];
 
-    // public function user() {
-    //     return $this->hasOne(User::class, 'profile_id')->where('role', 'student');  //users.profile_id = student_profiles.id
-    // }
-
-    public function user()
-    {
+    public function user(){
         return $this->belongsTo(User::class, 'user_id')->where('role', 'student');;
     }
 
     public function subjects() {
-    
         return $this->belongsToMany(Subject::class, 'student_subject');
         // student_profiles.id
         //     ↓
@@ -39,15 +33,16 @@ class StudentProfile extends Model
         // subjects.id = subject_id 
     }
 
-    public function studentSubjects() 
-    {
+    public function studentSubjects() {
         return $this->hasMany(StudentSubject::class, 'student_profile_id'); //student_subjects.student_profile_id = student_profiles.id
     }
 
-    public function classrooms()
-    {
+    public function classrooms(){
         return $this->belongsToMany(Classroom::class, 'classroom_student', 'student_profile_id', 'classroom_id');
     }
 
+    public function scores(){
+        return $this->hasMany(Score::class, 'student_profile_id'); 
+    }
     public $table = "student_profiles";
 }

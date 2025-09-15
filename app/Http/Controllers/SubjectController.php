@@ -41,7 +41,7 @@ class SubjectController extends Controller
     
     public function add()
     {
-        $data['teachers'] = User::where('role', 'teacher')->get();
+        $data['teachers'] = TeacherProfile::with('user')->get();
         return view('subjects.form', $data);
     }
 
@@ -122,6 +122,18 @@ class SubjectController extends Controller
         $classroom_list = Classroom::where('subject_id', $id)->get();
         
         return view('subjects.subject_info', compact('subject', 'teacher_subject_list', 'classroom_list'));
+    }
+
+    public function getTeachersBySubject($id)
+    {
+        // Lấy tất cả teacher_profile_id trong bảng teacher_subjects
+        $teacherIds = TeacherSubject::where('subject_id', $id)->pluck('teacher_profile_id');
+
+        // Lấy thông tin giáo viên
+        $teachers = TeacherProfile::whereIn('id', $teacherIds)->get();
+
+        // Trả về JSON
+        return response()->json($teachers);
     }
 
 }

@@ -17,11 +17,11 @@ class CreateScoresTable extends Migration
             $table->id();
             $table->unsignedBigInteger('student_profile_id');
             $table->unsignedBigInteger('class_id');
-            $table->float('tp1')->unsigned();
-            $table->float('tp2')->unsigned();
-            $table->float('qt')->unsigned();
-            $table->float('ck')->unsigned();
-            $table->float('tk')->unsigned();
+            $table->float('tp1')->unsigned()->nullable();
+            $table->float('tp2')->unsigned()->nullable();
+            $table->float('qt')->unsigned()->nullable();
+            $table->float('ck')->unsigned()->nullable();
+            $table->float('tk')->unsigned()->nullable();
             $table->timestamps();
             
             $table->foreign('student_profile_id')->references('id')->on('student_profiles')->onDelete('cascade');

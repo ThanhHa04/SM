@@ -1,5 +1,10 @@
 @extends('layout.base')
 @section('page_title', 'Điểm của lớp: '.$rec->name)
+@section('page_action')
+    <div class="text-center">
+        <a href="{{ route('scores.edit', $rec->id) }}" class="btn btn-primary">Sửa</a>
+    </div>
+@endsection
 @section('slot')
 <div class="card">
     <div class="card-body px-0 pb-2">
@@ -14,25 +19,21 @@
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Điểm quá trình</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Điểm cuối kì</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tổng kết</th>
-                        <th class="text-secondary opacity-7"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($rows as $row)
+                    @forelse($students as $student)
+                    @php
+                        $score = $student->scores->first();
+                    @endphp
                     <tr>
-                        <td class="text-xs">{{$row->student->student_id}}</td>
-                        <td class="text-xs">{{$row->student->user->name}}</td>
-                        <td class="text-xs">{{$row->tp1}}</td>
-                        <td class="text-xs">{{$row->tp2}}</td>
-                        <td class="text-xs">{{$row->qt}}</td>
-                        <td class="text-xs">{{$row->ck}}</td>
-                        <td class="text-xs">{{$row->tk}}</td>
-                        <td class="align-middle">
-                            <a class="text-secondary font-weight-bold text-xs"
-                                href="{{route('scores.edit', ['id' => $row->id])}}">Sửa</a> | 
-                            <a class="text-secondary font-weight-bold text-xs"
-                                href="{{route('scores.delete', ['id' => $row->id])}}">Xóa</a>
-                        </td>
+                        <td class="text-xs">{{$student->student_id}}</td>
+                        <td class="text-xs">{{$student->name}}</td>
+                        <td class="text-xs">{{$score->tp1 ?? ''}}</td>
+                        <td class="text-xs">{{$score->tp2 ?? ''}}</td>
+                        <td class="text-xs">{{$score->qt ?? ''}}</td>
+                        <td class="text-xs">{{$score->ck ?? ''}}</td>
+                        <td class="text-xs">{{$score->tk ?? ''}}</td>
                     </tr>
                     @empty
                     <tr><td class="align-middle text-secondary font-weight-bold text-xs">Không có dữ liệu</td></tr>

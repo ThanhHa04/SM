@@ -30,7 +30,7 @@
                         <td class="align-middle">
                             @if(in_array(auth()->user()->role, ['teacher']))
                             <a class="text-secondary font-weight-bold text-xs"
-                                href="{{route('scores.edit', ['id' => $row->id])}}">Sửa</a> | 
+                                href="{{route('scores.edit', $row->id)}}">Sửa</a> | 
                             <a class="text-secondary font-weight-bold text-xs"
                                 href="{{route('scores.delete', ['id' => $row->id])}}">Xóa</a>
                             @endif

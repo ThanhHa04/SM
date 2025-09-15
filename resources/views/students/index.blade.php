@@ -27,7 +27,7 @@
                         <td class="text-xs">{{$row->phone_number}}</td>
                         <td class="align-middle">
                             <a class="text-secondary font-weight-bold text-xs"
-                                href="{{ route('students.show-classroom', ['id' => $row->id]) }}">Xem</a> |
+                                href="{{ route('students.show-classroom', ['id' => $row->user->id]) }}">Xem</a> |
                             <a class="text-secondary font-weight-bold text-xs"
                                 href="{{route('students.edit', ['id' => $row->id])}}">Sửa</a> | 
                             <a class="text-secondary font-weight-bold text-xs"

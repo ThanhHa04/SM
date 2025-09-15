@@ -10,6 +10,11 @@
                 <thead>
                     <tr>
                         <th class="text-xs ps-2">Tên lớp</th>
+                        <th class="text-xs ps-2">Thành phần 1</th>
+                        <th class="text-xs ps-2">Thành phần 2</th>
+                        <th class="text-xs ps-2">Quá trình</th>
+                        <th class="text-xs ps-2">Cuối kỳ</th>
+                        <th class="text-xs ps-2">Tổng kết</th>
                         <th class="text-xs ps-2">Ngày tham gia</th>
                         <th class="text-xs ps-2"></th>
                     </tr>
@@ -18,6 +23,11 @@
                     @forelse($classes as $class)
                     <tr>
                         <td class="text-xs">{{ $class->name }}</td>
+                        <td class="text-xs">{{ $scores[$class->id]->tp1 ?? '-' }}</td>
+                        <td class="text-xs">{{ $scores[$class->id]->tp2 ?? '-' }}</td>
+                        <td class="text-xs">{{ $scores[$class->id]->qt ?? '-' }}</td>
+                        <td class="text-xs">{{ $scores[$class->id]->ck ?? '-' }}</td>
+                        <td class="text-xs">{{ $scores[$class->id]->tk ?? '-' }}</td>
                         <td class="text-xs">{{ $class->created_at }}</td>
                         <td class="align-middle">
                             <a class="text-secondary font-weight-bold text-xs"

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User as MainModel;
 use App\Models\StudentProfile;
 use App\Models\Classroom;
+use App\Models\Score;
 use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
@@ -142,15 +143,12 @@ class StudentController extends Controller
         $student = StudentProfile::where('user_id', $id)->firstOrFail();
         $studentt = StudentProfile::with('user', 'classrooms')->findOrFail($student->id);
         $classes = $studentt->classrooms;
-            
-        // SELECT classrooms.*
-        // FROM classrooms
-        // JOIN classroom_student
-        // ON classroom_student.classroom_id = classrooms.id
-        // WHERE classroom_student.student_profile_id = 5;
+        $scores = Score::where('student_profile_id', $student->id)
+                        ->whereIn('class_id', $classes->pluck('id'))
+                        ->get()
+                        ->keyBy('class_id');
 
-        return view('students.student_class', compact('student', 'classes'));
-    }
-
+        return view('students.student_class', compact('student', 'classes', 'scores'));
+        }
     
 }

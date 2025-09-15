@@ -118,14 +118,7 @@
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Bảng điểm</h6>
                 </li>
-                @if(in_array(auth()->user()->role, ['teacher']))
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{route('scores.add')}}">
-                        <span class="nav-link-text ms-1">
-                            Thêm điểm
-                        </span>
-                    </a>
+                @if(in_array(auth()->user()->role, ['teacher','admin']))
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{route('scores.classrooms')}}">
@@ -216,6 +209,7 @@
                         </div>
                     </form>
                     @endif
+                    @yield('page_action')
                 </nav>
             </div>
         </nav>
